@@ -22,5 +22,21 @@ insert into employee VALUES ( 100001, "Joey", "Lane", 10006, NULL),
 ( 100006, "Cornelius", "Hampton", 10003, 100004);
 
 Select * from employee_db.employee;
+Select e.id, e.first_name, e.last_name, e.role_id, e.manager_id, d.dept_name
+from employee as e
+	INNER JOIN role as r ON r.id = e.role_id
+    INNER JOIN department as d ON d.id = r.role_department
+    WHERE r.role_department = 1004;
+
+-- query by manager using JOIN
+SELECT distinct e2.id, e2.first_name, e2.last_name, e2.role_id, e2.manager_id
+ from employee as e1
+	INNER JOIN employee as e2 ON e2.id = e1.manager_id;
+    
+-- query by manager using IN clause
+SELECT id, first_name, last_name, role_id, manager_id
+ from employee as e1
+ WHERE id IN ( SELECT DISTINCT manager_id FROM employee );
+    
 
 ALTER USER 'testuser'@'localhost' IDENTIFIED WITH mysql_native_password BY "test@100";

@@ -14,10 +14,16 @@ var questions = [
         choices: ["View All Employees",
             "View All Employees By Department",
             "View All Employees By Manager",
+            // "Remove Employee",
+            // "Update Employee Role",
+            // "Update Employee Manager"
+            "View Departments",
+            "View Roles",
             "Add Employee",
-            "Remove Employee",
-            "Update Employee Role",
-            "Update Employee Manager"]
+            "Add Department",
+            "Add Role",
+            "Update Employee Role"        
+        ]
     }
 ];
 
@@ -28,15 +34,50 @@ function initiateSelection() {
         switch (answer.action) {
             case "View All Employees":
                 queries.viewAllEmployee().then((result)=>{
-                    console.log("back to server");
                     console.table(result);
                     initiateSelection();
                 });
                 break;
             case "View All Employees By Department":
+                queries.viewAllDepartments().then((departments)=>{
+                    // build department choices
+                    var departmentsChoice = departments.map((department)=>{
+                        return {
+                            value: department.id,
+                            name: department.dept_name
+                        }
+                    })
 
+                    inquirer.prompt({
+                        type: "list",
+                        message: "Select a department to view its employees: ",
+                        name: "department",
+                        choices: departmentsChoice
+                    }).then((departmentSelected) => {
+                        console.log(departmentSelected);
+                        queries.viewAllEbyD(departmentSelected.department).then((result)=>{
+                            console.table(result);
+                            initiateSelection();
+                        });
+                    });
+                });
                 break;
             case "View All Employees By Manager":
+                queries.getAllManagers().then((managers)=>{
+                    inquirer.prompt({
+                        type: "list",
+                        message: "Select the manger whose direct report you want to see: ",
+                        name: "manager",
+                        choices: managers
+                    }).then((managerSelected) => {
+                        console.log(managerSelected);
+                        queries.viewAllEbyM(managerSelected.manager).then((result)=>{
+                            console.table(result);
+                            initiateSelection();
+                        });
+                    });
+                });
+
 
                 break;
             case "Add Employee":
